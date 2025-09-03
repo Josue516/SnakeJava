@@ -11,8 +11,8 @@ public class SnakeMain extends PApplet{
 	boolean map[][] = new boolean [filas][columnas];
 	PVector direction = new PVector(1,0);
 	
-	boolean greenBox = true;
-	boolean purpleBox = true;
+	boolean greenBox = false;
+	boolean purpleBox = false;
 	
 	Manzana apple = new Manzana();
 	//Snake humanSnake = new Snake(100, 200, 100, new PVector(2, 2), new PVector(2, 1));
@@ -55,39 +55,50 @@ public class SnakeMain extends PApplet{
 		//}
 	}
 	void drawMap() {
-		//DIBUJAMOS EL CUADRADO GRIS DE ABAJO
-		fill(100, 100, 100);
-		rect(0, 500, width, 40);
-		//DIBUJAMOS LAS DOS CASILLAS DEL MARCADOR
-		fill(100, 200,100);
-		rect(30, 510,210,20);
-		
-		fill(100,100,200);
-		rect(270, 510, 210, 20);
-		
-		if(greenBox == false) {
-			fill(250,50,50);
-			rect(30, 510, 210, 20);
+		  // Fondo gris de abajo
+		  fill(100, 100, 100);
+		  rect(0, 500, width, 40);
+
+		  // --- Botón verde ---
+		  if (!greenBox) {
+		    if (mouseX >= 30 && mouseX <= 240 && mouseY >= 510 && mouseY <= 530) {
+		      fill(200, 255, 200); // más claro cuando está encima
+		    } else {
+		      fill(100, 200, 100); // color normal
+		    }
+		  } else {
+		    fill(250, 50, 50); // rojo cuando está desactivado
+		  }
+		  rect(30, 510, 210, 20);
+
+		  // --- Botón morado ---
+		  if (!purpleBox) {
+		    if (mouseX >= 270 && mouseX <= 480 && mouseY >= 510 && mouseY <= 530) {
+		      fill(200, 200, 255); // más claro cuando está encima
+		    } else {
+		      fill(100, 100, 200); // color normal
+		    }
+		  } else {
+		    fill(250, 50, 50); // rojo cuando está desactivado
+		  }
+		  rect(270, 510, 210, 20);
 		}
-		if(purpleBox == false) {
-			fill(250,50,50);
-			rect(270,510,210,20);
+
+		void drawApple() {
+		  fill(215, 0, 75);
+		  rect(apple.position.x * bs, apple.position.y * bs, bs, bs);
 		}
-	}
-	void drawApple() {
-		fill(215, 0, 75);
-		rect(apple.position.x * bs, apple.position.y * bs, bs, bs);
-	}
-	
-	@Override
-	public void mouseClicked() {
-		//COMPRUEBA SI ESTA EN EL CUADRADO VERDE EL CLICK. SI ES ASI CAMBIARA EL ESTADO DEL SNAKE MUERTO-VIVO
-		if (mouseX >= 30 && mouseX <= 240 && mouseY >= 510 && mouseY <= 530) {
-			greenBox = !greenBox;
+
+		@Override
+		public void mouseClicked() {
+		  // Botón verde
+		  if (mouseX >= 30 && mouseX <= 240 && mouseY >= 510 && mouseY <= 530) {
+		    greenBox = !greenBox;
+		  }
+		  // Botón morado
+		  if (mouseX >= 270 && mouseX <= 480 && mouseY >= 510 && mouseY <= 530) {
+		    purpleBox = !purpleBox;
+		  }
 		}
-		//COMPRUEBA SI ESTA EN EL CUADRADO MORADO AL HACER CLICK
-		if (mouseX >= 270 && mouseX <= 480 && mouseY >= 510 && mouseY <= 530) {
-			purpleBox = !purpleBox;
-		}
-	}
+
 }
