@@ -15,7 +15,7 @@ public class SnakeMain extends PApplet{
 	boolean purpleBox = false;
 	
 	Manzana apple = new Manzana();
-	//Snake humanSnake = new Snake(100, 200, 100, new PVector(2, 2), new PVector(2, 1));
+	Snake humanSnake = new Snake(100, 200, 100, new PVector(2, 2), new PVector(2, 1));
 	//Snake botSnake = new Snake()(100, 100, 200, new PVector(18, 18), new PVector(18, 19));
 	
 	@Override
@@ -34,7 +34,7 @@ public class SnakeMain extends PApplet{
 		drawMap();
 		drawApple();
 		
-		//playHumanSnake();
+		playHumanSnake();
 		//playBotSnake(botSnake);
 	}
 	void initGame() {
@@ -50,15 +50,20 @@ public class SnakeMain extends PApplet{
 		//for (int i = 1; i < botSnake.posX.size(); i++) {
 		//	map[botSnake.posY.get(i)][botSnake.posX.get(i)] = false;
 		//}
-		//for (int i = 1; i < humanSnake.posX.size(); i++) {
-		//	map[humanSnake.posY.get(i)][humanSnake.posX.get(i)] = false;
-		//}
+		for (int i = 1; i < humanSnake.posX.size(); i++) {
+			map[humanSnake.posY.get(i)][humanSnake.posX.get(i)] = false;
+		}
 	}
 	void drawMap() {
 		  // Fondo gris de abajo
 		  fill(100, 100, 100);
 		  rect(0, 500, width, 40);
-
+		  //CASILLAS DEL MARCADOR
+		  fill(100, 100, 100);
+		  rect(30, 510, 210, 20);
+		  
+		  fill(100, 100, 200);
+		  rect(270, 510, 210, 20);
 		  // --- Botón verde ---
 		  if (!greenBox) {
 		    if (mouseX >= 30 && mouseX <= 240 && mouseY >= 510 && mouseY <= 530) {
@@ -88,7 +93,77 @@ public class SnakeMain extends PApplet{
 		  fill(215, 0, 75);
 		  rect(apple.position.x * bs, apple.position.y * bs, bs, bs);
 		}
-
+		
+		void playHumanSnake() {
+			if(humanSnake.alive == true) {
+				moveHumanSnake();
+				drawSnake(humanSnake);
+				detectBorder(humanSnake);
+				snakeCrash(humanSnake);
+			}
+		}
+		void moveHumanSnake() {
+			humanSnake.mover((int) direction.x, (int) direction.y);
+			eat(humanSnake);
+		}
+		void eat(Snake snake) {
+			if (snake.posX.get(0) == apple.position.x && snake.posY.get(0) == apple.position.y) {
+				apple.spawn(map);
+				snake.comer();
+			}
+		}
+		void drawSnake(Snake snake) {
+			fill(snake.r, snake.g, snake.b);
+			for(int i = 0; i < snake.posX.size(); i++) {
+				rect(snake.posX.get(i) * bs, snake.posY.get(i) * bs, bs, bs);
+			}
+		}
+		
+		void detectBorder(Snake s) {
+			if(s.posX.get(0) < 0 || s.posX.get(0) > (columnas - 1) || s.posY.get(0) < 0 || s.posY.get(0) > (filas - 1)) {
+				s.restart();
+			}
+		}
+		
+		void snakeCrash(Snake s1) {
+			if (s1.alive == true) {
+				for (int i = 2; i < s1.posX.size(); i++) {
+					if(s1.posX.get(0) == s1.posX.get(i) && s1.posY.get(0) == s1.posY.get(i)) {
+						s1.restart();
+				}
+				}
+			}
+		}
+		void restartGame() {
+			humanSnake.restart();
+			initGame();
+		}
+		@Override
+		public void keyPressed() {
+			if (key == 'w' || keyCode == UP) {
+				if (direction.y != 1) {
+					direction.set(0, -1);
+				}
+			}
+			if (key == 's' || keyCode == DOWN) {
+				if (direction.y != -1) {
+					direction.set(0, 1);
+				}
+			}
+			if (key == 'a' || keyCode == LEFT) {
+				if (direction.x != 1) {
+				direction.set(-1, 0);			
+				}
+			}
+			if (key == 'd' || keyCode == RIGHT) {
+				if(direction.x != -1) {
+				direction.set(1,0);
+				}
+			}
+			if (key == 'r') {
+				restartGame();
+			}
+			}
 		@Override
 		public void mouseClicked() {
 		  // Botón verde
