@@ -7,6 +7,10 @@ public class SnakeMain extends PApplet{
 	int filas = 25;
 	int columnas = 25;
 	int bs = 20;
+	//SELECTOR DE DIFICULTAD:
+	String dificultad = "medio";
+	float velocidad = 25; // frameRate base
+	
 	
 	boolean map[][] = new boolean [filas][columnas];
 	PVector direction = new PVector(1,0);
@@ -87,6 +91,11 @@ public class SnakeMain extends PApplet{
 		    fill(250, 50, 50); // rojo cuando está desactivado
 		  }
 		  rect(270, 510, 210, 20);
+		  //DIFICULTAD
+		  fill(255);
+		  textSize(12);
+		  textAlign(LEFT);
+		  text("Dificultad: " + dificultad, 30, 495);
 		}
 
 		void drawApple() {
@@ -188,7 +197,11 @@ public class SnakeMain extends PApplet{
 			if (key == 'r') {
 				restartGame();
 			}
-			}
+			// --- Selector de dificultad ---
+			  if (key == '1') seleccionarDificultad("fácil");
+			  if (key == '2') seleccionarDificultad("medio");
+			  if (key == '3') seleccionarDificultad("difícil");
+		}
 		@Override
 		public void mouseClicked() {
 		  // Botón verde
@@ -208,7 +221,22 @@ public class SnakeMain extends PApplet{
 		    }else {
 		    	botSnake.restart();
 		    }
-		  }
-		}
-
+		 }
+	}
+		//SELECTOR DE DIFICULTAD:
+		void seleccionarDificultad(String nivel) {
+			  dificultad = nivel;
+			  switch (nivel) {
+			    case "fácil":
+			      velocidad = 15;
+			      break;
+			    case "medio":
+			      velocidad = 25;
+			      break;
+			    case "difícil":
+			      velocidad = 40;
+			      break;
+			  }
+			  frameRate(velocidad);
+			}
 }

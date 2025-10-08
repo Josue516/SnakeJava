@@ -9,7 +9,6 @@ public class LongRoad {
     private final int filas = 25;
     private int nodoP;
     private ArrayList<Integer> caminoNodos = new ArrayList<Integer>();
-    private final int V;
     Dijkstra d = new Dijkstra();
     
     public LongRoad (boolean[][] map,int nodoOrigen,int nodoDestino){
@@ -17,7 +16,6 @@ public class LongRoad {
         this.nodoOrigen = nodoOrigen;
         this.nodoDestino = nodoDestino;
         nodoP = nodoOrigen;
-        V = filas * filas;
     }
        
     public int[] getLongestRoad(){
