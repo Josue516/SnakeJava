@@ -16,7 +16,7 @@ public class SnakeMain extends PApplet{
 	
 	Manzana apple = new Manzana();
 	Snake humanSnake = new Snake(100, 200, 100, new PVector(2, 2), new PVector(2, 1));
-	//Snake botSnake = new Snake()(100, 100, 200, new PVector(18, 18), new PVector(18, 19));
+	Snake botSnake = new Snake(100, 100, 200, new PVector(18, 18), new PVector(18, 19));
 	
 	@Override
 	public void settings() {
@@ -35,7 +35,7 @@ public class SnakeMain extends PApplet{
 		drawApple();
 		
 		playHumanSnake();
-		//playBotSnake(botSnake);
+		playBotSnake(botSnake);
 	}
 	void initGame() {
 		updateMap();
@@ -47,9 +47,9 @@ public class SnakeMain extends PApplet{
 				map[i][j]=true;
 		}	
 	}
-		//for (int i = 1; i < botSnake.posX.size(); i++) {
-		//	map[botSnake.posY.get(i)][botSnake.posX.get(i)] = false;
-		//}
+		for (int i = 1; i < botSnake.posX.size(); i++) {
+			map[botSnake.posY.get(i)][botSnake.posX.get(i)] = false;
+		}
 		for (int i = 1; i < humanSnake.posX.size(); i++) {
 			map[humanSnake.posY.get(i)][humanSnake.posX.get(i)] = false;
 		}
@@ -99,7 +99,7 @@ public class SnakeMain extends PApplet{
 				moveHumanSnake();
 				drawSnake(humanSnake);
 				detectBorder(humanSnake);
-				snakeCrash(humanSnake);
+				snakeCrash(humanSnake, botSnake);
 			}
 		}
 		void moveHumanSnake() {
@@ -125,15 +125,40 @@ public class SnakeMain extends PApplet{
 			}
 		}
 		
-		void snakeCrash(Snake s1) {
+		void snakeCrash(Snake s1, Snake s2) {
 			if (s1.alive == true) {
 				for (int i = 2; i < s1.posX.size(); i++) {
 					if(s1.posX.get(0) == s1.posX.get(i) && s1.posY.get(0) == s1.posY.get(i)) {
 						s1.restart();
+					}
 				}
+			}
+			if (s1.alive == true && s2.alive == true) {
+				for (int i = 0; i < s2.posX.size(); i++) {
+					if (s1.posX.get(0) == s2.posX.get(i) && s1.posY.get(0) == s2.posY.get(i)) {
+						s1.restart();
+					}
 				}
 			}
 		}
+		void playBotSnake(Snake bot) {
+			if (bot.alive == true) {
+				moveBotSnake(bot);
+				drawSnake(bot);
+				detectBorder(bot);
+				snakeCrash(bot, humanSnake);
+			}
+		}
+		void moveBotSnake(Snake s1) {
+			s1.mover(apple.getPosition(), map);
+			eat(s1);
+		}
+		void deleteSnake(Snake s) {
+			s.posX.clear();
+			s.posY.clear();
+			s.alive = false;
+		}
+		
 		void restartGame() {
 			humanSnake.restart();
 			initGame();
@@ -169,10 +194,20 @@ public class SnakeMain extends PApplet{
 		  // Botón verde
 		  if (mouseX >= 30 && mouseX <= 240 && mouseY >= 510 && mouseY <= 530) {
 		    greenBox = !greenBox;
+		    if (humanSnake.alive == true) {
+		    	deleteSnake(humanSnake);
+		    }else {
+		    	humanSnake.restart();
+		    }
 		  }
 		  // Botón morado
 		  if (mouseX >= 270 && mouseX <= 480 && mouseY >= 510 && mouseY <= 530) {
 		    purpleBox = !purpleBox;
+		    if (botSnake.alive == true) {
+		    	deleteSnake(botSnake);
+		    }else {
+		    	botSnake.restart();
+		    }
 		  }
 		}
 

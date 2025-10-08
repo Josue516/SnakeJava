@@ -13,12 +13,14 @@ public class Snake {
 	//POSICIONES POR DONDE EMPIEZAN
 	private final PVector initialPosition1;
 	private final PVector initialPosition2;
-
+	private Bot movement = new Bot();
+	
 	public int r,g,b;
 	
 	public Snake(int r, int g, int b, PVector initial1, PVector initial2) {
 		this.r = r;
 		this.g = g;
+		this.b = b;
 		this.initialPosition1 = initial1;
 		this.initialPosition2 = initial2;
 		
@@ -33,6 +35,19 @@ public class Snake {
 		
 		posX.remove(posX.size()-1);
 		posY.remove(posY.size()-1);
+	}
+	//BOT MOVIMIENTO
+	public void mover(PVector apple, boolean[][]map) {
+		PVector headSnake = new PVector(posX.get(0), posY.get(0));
+		PVector tailSnake = new PVector(posX.size()-1, posY.get(posY.size()-1));
+		
+		PVector nextMove = movement.getNewPosition(map, headSnake, tailSnake, apple, posX.size());
+		
+		posX.add(0, posX.get(0) + (int)nextMove.x);
+		posY.add(0, posY.get(0) + (int)nextMove.y);
+		
+		posX.remove(posX.size() - 1);
+		posY.remove(posY.size() - 1);
 	}
 	//PARA HACER MAS GRANDE A LA SERPIENTE
 	public void comer() {
