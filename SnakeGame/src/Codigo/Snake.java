@@ -54,6 +54,8 @@ public class Snake {
 	public void comer() {
 		posX.add(posX.get(posX.size() - 1));
 		posY.add(posY.get(posY.size() - 1));
+		
+		
 	}
 	//REINICIAR TODO AL COMIENZO
 	public void restart() {

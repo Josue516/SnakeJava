@@ -4,6 +4,10 @@ public class SnakeMain extends PApplet{
 	public static void main(String[] args) {
 		PApplet.main(new String[] {Codigo.SnakeMain.class.getName()});
 	}
+	//PUNTAJE USUARIO/BOT
+	int playerScore = 0;
+	int botScore = 0;
+	
 	int filas = 25;
 	int columnas = 25;
 	int bs = 20;
@@ -132,6 +136,13 @@ public class SnakeMain extends PApplet{
 		  textSize(12);
 		  textAlign(LEFT);
 		  text("Dificultad: " + dificultad, 30, 495);
+		  
+		  //PUNTAJES
+		  textAlign(CENTER);
+		  textSize(12);
+		  fill(255);
+		  text("Jugador: " + playerScore, 135, 524);
+		  text("Bot: " + botScore, 375, 524);
 		}
 
 		void drawApple() {
@@ -152,10 +163,17 @@ public class SnakeMain extends PApplet{
 			eat(humanSnake);
 		}
 		void eat(Snake snake) {
-			if (snake.posX.get(0) == apple.position.x && snake.posY.get(0) == apple.position.y) {
-				apple.spawn(map);
-				snake.comer();
-			}
+			  if (snake.posX.get(0) == apple.position.x && snake.posY.get(0) == apple.position.y) {
+				    apple.spawn(map);
+				    snake.comer();
+				    
+				    // Sumar puntaje según quién haya comido
+				    if (snake == humanSnake) {
+				      playerScore += 10;
+				    } else if (snake == botSnake) {
+				      botScore += 10;
+				    }
+				  }
 		}
 		void drawSnake(Snake snake) {
 			fill(snake.r, snake.g, snake.b);
@@ -167,6 +185,8 @@ public class SnakeMain extends PApplet{
 		void detectBorder(Snake s) {
 			if(s.posX.get(0) < 0 || s.posX.get(0) > (columnas - 1) || s.posY.get(0) < 0 || s.posY.get(0) > (filas - 1)) {
 				s.restart();
+				if (s == humanSnake) playerScore = 0;
+				if (s == botSnake) botScore = 0;
 			}
 		}
 		
@@ -175,6 +195,8 @@ public class SnakeMain extends PApplet{
 				for (int i = 2; i < s1.posX.size(); i++) {
 					if(s1.posX.get(0) == s1.posX.get(i) && s1.posY.get(0) == s1.posY.get(i)) {
 						s1.restart();
+						if (s1 == humanSnake) playerScore = 0;
+						if (s1 == botSnake) botScore = 0;
 					}
 				}
 			}
@@ -182,6 +204,8 @@ public class SnakeMain extends PApplet{
 				for (int i = 0; i < s2.posX.size(); i++) {
 					if (s1.posX.get(0) == s2.posX.get(i) && s1.posY.get(0) == s2.posY.get(i)) {
 						s1.restart();
+						if (s1 == humanSnake) playerScore = 0;
+						if (s1 == botSnake) botScore = 0;
 					}
 				}
 			}
@@ -237,6 +261,8 @@ public class SnakeMain extends PApplet{
 				  gameState = "menu";
 				  humanSnake.restart();
 				  botSnake.restart();
+				  playerScore = 0;
+				  botScore = 0;
 			}
 			// --- Selector de dificultad ---
 			  if (key == '1') seleccionarDificultad("fácil");
