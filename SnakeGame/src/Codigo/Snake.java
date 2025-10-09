@@ -42,7 +42,8 @@ public class Snake {
 		PVector tailSnake = new PVector(posX.size()-1, posY.get(posY.size()-1));
 		
 		PVector nextMove = movement.getNewPosition(map, headSnake, tailSnake, apple, posX.size());
-		
+		System.out.println("Head: (" + posX.get(0) + ", " + posY.get(0) + 
+			    ") NextMove: (" + nextMove.x + ", " + nextMove.y + ")");
 		posX.add(0, posX.get(0) + (int)nextMove.x);
 		posY.add(0, posY.get(0) + (int)nextMove.y);
 		

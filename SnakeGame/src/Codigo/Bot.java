@@ -53,23 +53,23 @@ public class Bot extends PApplet{
 				}
 			}
 		}
-		//DERECHA
-		if (j > 0 && !direction.equals("derecha")) {
-			if (checkMove(i * filas + j - 1, tailNodo)) {
-				if (dist[i * filas + j - 1] < min) {
-					min = dist[i * filas + j - 1];
-					provisionalNodo = i * filas + j - 1;
-				}
-			}
-		}
-		//IZQUIERDA
+		// IZQUIERDA
 		if (j < filas - 1 && !direction.equals("izquierda")) {
-			if (checkMove(i * filas + j + 1, tailNodo)) {
-				if (dist[i * filas + j + 1] < min) {
-					min = dist [ i * filas + j + 1];
-					provisionalNodo = i * filas + j + 1;
-				}
-			}
+		    if (checkMove(i * filas + j + 1, tailNodo)) {
+		        if (dist[i * filas + j + 1] < min) {
+		            min = dist[i * filas + j + 1];
+		            provisionalNodo = i * filas + j + 1;
+		        }
+		    }
+		}
+		// DERECHA
+		if (j > 0 && !direction.equals("derecha")) {
+		    if (checkMove(i * filas + j - 1, tailNodo)) {
+		        if (dist[i * filas + j - 1] < min) {
+		            min = dist[i * filas + j - 1];
+		            provisionalNodo = i * filas + j - 1;
+		        }
+		    }
 		}
 		//CAMINO LARGO
 		if (min == Integer.MAX_VALUE) {
@@ -78,20 +78,24 @@ public class Bot extends PApplet{
 		else {
 			contador = 0;
 		}
-		//MOVIMIENTO
-		lastMove.set((provisionalNodo % filas)-vHead.x, (int) (provisionalNodo/filas) - vHead.y);
-		//NUEVA DIRECCION 
-		if(lastMove.x == 1) {
-			direction = "derecha";
-		}
-		else if(lastMove.x == -1) {
-			direction = "izquierda";
-		}else if(lastMove.y == 1) {
-			direction = "abajo";
-		}else if (lastMove.y == -1) {
-			direction = "arriba";
-		}
-		return lastMove;
+	    // MOVIMIENTO
+	    lastMove.set(
+	        (provisionalNodo % filas) - vHead.x,
+	        (provisionalNodo / filas) - vHead.y
+	    );
+
+	    // NUEVA DIRECCIÓN
+	    if (lastMove.x == 1) {
+	        direction = "derecha";
+	    } else if (lastMove.x == -1) {
+	        direction = "izquierda";
+	    } else if (lastMove.y == 1) {
+	        direction = "abajo";
+	    } else if (lastMove.y == -1) {
+	        direction = "arriba";
+	    }
+
+	    return lastMove;
 	}
 	//METODO PARA QUE NO SE ENCIERRA
 	private boolean checkMove(int nextNodo, int tailNodo) {
@@ -115,6 +119,12 @@ public class Bot extends PApplet{
 		PVector tail = transformIntoVector (tailNodo);
 		PVector head = transformIntoVector (headNodo);
 		
+		if (tail.x >= filas || tail.y >= filas || head.x >= filas || head.y >= filas) {
+		    System.out.println("⚠️ Coordenadas fuera de rango:");
+		    System.out.println("tail: " + tail + " | tailNodo: " + tailNodo);
+		    System.out.println("head: " + head + " | headNodo: " + headNodo);
+		}
+		
 		newMap[(int) tail.y][(int) tail.x] = true;
 		
 		if(tail.y > 0) {
@@ -125,6 +135,11 @@ public class Bot extends PApplet{
 		if (tail.y < filas - 1) {
 			if(newMap[(int) tail.y + 1][(int) tail.x] == false) {
 				newMap[(int) tail.y + 1][(int) tail.x] = true;
+			}
+		}
+		if (tail.x > 0) {
+			if (newMap[(int) tail.y][(int) tail.x - 1] == false) {
+				newMap[(int) tail.y][(int) tail.x - 1] = true;
 			}
 		}
 		if(tail.x < filas - 1) {
@@ -229,14 +244,24 @@ public class Bot extends PApplet{
         return nodo;
     }
     
-    private int transformVectorIntoNodo(PVector p){
-        int nodo = (int) (p.x + p.y * filas);
-        return nodo;
-    }
-    private PVector transformIntoVector(int nodo) {
-        int y = (int) nodo / filas;
-        int x = nodo % filas;
-
-        return new PVector(x, y);
-    }
+	private int transformVectorIntoNodo(PVector v){
+	    if (v.x < 0 || v.y < 0 || v.x >= filas || v.y >= filas) {
+	        System.out.println("⚠️ Coordenada fuera de rango: " + v);
+	        return 0; // valor por defecto seguro
+	    }
+	    // La fórmula correcta es: columna + fila * ancho
+	    return (int)(v.x + v.y * filas);
+	}
+	private PVector transformIntoVector(int nodo) {
+	    // Validación de seguridad
+	    if (nodo < 0 || nodo >= filas * filas) {
+	        System.out.println("⚠️ Nodo fuera de rango en transformIntoVector: " + nodo);
+	        nodo = Math.max(0, Math.min(nodo, filas * filas - 1));
+	    }
+	    
+	    int y = nodo / filas;
+	    int x = nodo % filas;
+	    
+	    return new PVector(x, y);
+	}
 }

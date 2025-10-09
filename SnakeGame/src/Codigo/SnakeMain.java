@@ -10,7 +10,7 @@ public class SnakeMain extends PApplet{
 	//SELECTOR DE DIFICULTAD:
 	String dificultad = "medio";
 	float velocidad = 25; // frameRate base
-	
+	String gameState = "menu";
 	
 	boolean map[][] = new boolean [filas][columnas];
 	PVector direction = new PVector(1,0);
@@ -34,13 +34,49 @@ public class SnakeMain extends PApplet{
 	@Override
 	public void draw() {
 		background(25);
-		updateMap();
-		drawMap();
-		drawApple();
 		
-		playHumanSnake();
-		playBotSnake(botSnake);
+		if (gameState.equals("menu")) {
+		    drawMenu();
+		  } else if (gameState.equals("jugando")) {
+		    updateMap();
+		    drawMap();
+		    drawApple();
+
+		    playHumanSnake();
+		    playBotSnake(botSnake);
+		  }
 	}
+	//MENU DE SELECCION DE NIVEL:
+	void drawMenu() {
+		  background(30);
+
+		  fill(255);
+		  textAlign(CENTER);
+		  textSize(28);
+		  text("SNAKE GAME", width / 2, 150);
+
+		  textSize(18);
+		  text("Selecciona la dificultad \n Recomiendo la dificultad Facil.", width / 2, 220);
+		  
+		  // Botones
+		  fill(100, 200, 100);
+		  rect(width / 2 - 100, 260, 200, 40);
+		  fill(255);
+		  text("FÁCIL", width / 2, 285);
+
+		  fill(230, 200, 100);
+		  rect(width / 2 - 100, 320, 200, 40);
+		  fill(255);
+		  text("MEDIO", width / 2, 345);
+
+		  fill(200, 80, 80);
+		  rect(width / 2 - 100, 380, 200, 40);
+		  fill(255);
+		  text("DIFÍCIL", width / 2, 405);
+		  
+		  textSize(18);
+		  text("Puede volver al menu con la tecla 'm' \n O cambiar en medio del juego con los numeros 1, 2 y 3.", width / 2, 450);
+		}
 	void initGame() {
 		updateMap();
 		apple.spawn(map);
@@ -197,6 +233,11 @@ public class SnakeMain extends PApplet{
 			if (key == 'r') {
 				restartGame();
 			}
+			if (key == 'm') {
+				  gameState = "menu";
+				  humanSnake.restart();
+				  botSnake.restart();
+			}
 			// --- Selector de dificultad ---
 			  if (key == '1') seleccionarDificultad("fácil");
 			  if (key == '2') seleccionarDificultad("medio");
@@ -204,18 +245,37 @@ public class SnakeMain extends PApplet{
 		}
 		@Override
 		public void mouseClicked() {
-		  // Botón verde
-		  if (mouseX >= 30 && mouseX <= 240 && mouseY >= 510 && mouseY <= 530) {
-		    greenBox = !greenBox;
-		    if (humanSnake.alive == true) {
-		    	deleteSnake(humanSnake);
-		    }else {
-		    	humanSnake.restart();
-		    }
-		  }
-		  // Botón morado
-		  if (mouseX >= 270 && mouseX <= 480 && mouseY >= 510 && mouseY <= 530) {
-		    purpleBox = !purpleBox;
+			//MENU PARA SELECCIONAR DIFICULTAD:
+			if (gameState.equals("menu")) {
+			    if (mouseX >= width / 2 - 100 && mouseX <= width / 2 + 100) {
+			      if (mouseY >= 260 && mouseY <= 300) {
+			        seleccionarDificultad("fácil");
+			        gameState = "jugando";
+			        initGame();
+			      } else if (mouseY >= 320 && mouseY <= 360) {
+			        seleccionarDificultad("medio");
+			        gameState = "jugando";
+			        initGame();
+			      } else if (mouseY >= 380 && mouseY <= 420) {
+			        seleccionarDificultad("difícil");
+			        gameState = "jugando";
+			        initGame();
+			      }
+			    }
+			    return;
+			  }
+			// Botón verde
+			if (mouseX >= 30 && mouseX <= 240 && mouseY >= 510 && mouseY <= 530) {
+				greenBox = !greenBox;
+				if (humanSnake.alive == true) {
+					deleteSnake(humanSnake);
+				}else {
+					humanSnake.restart();
+				}
+			}
+			// Botón morado
+			if (mouseX >= 270 && mouseX <= 480 && mouseY >= 510 && mouseY <= 530) {
+				purpleBox = !purpleBox;
 		    if (botSnake.alive == true) {
 		    	deleteSnake(botSnake);
 		    }else {
