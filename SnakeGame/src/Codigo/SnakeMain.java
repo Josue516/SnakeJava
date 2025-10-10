@@ -1,9 +1,13 @@
 package Codigo;
 import processing.core.*;
+import ddf.minim.*;
 public class SnakeMain extends PApplet{
 	public static void main(String[] args) {
 		PApplet.main(new String[] {Codigo.SnakeMain.class.getName()});
 	}
+	//SONIDO AL COMER LA MANZANA
+	Minim minim;
+	AudioPlayer eatSound;
 	//PUNTAJE USUARIO/BOT
 	int playerScore = 0;
 	int botScore = 0;
@@ -33,6 +37,8 @@ public class SnakeMain extends PApplet{
 	@Override
 	public void setup() {
 		frameRate(25);
+		minim = new Minim(this);
+		eatSound = minim.loadFile("eat.mp3"); // o .wav
 		initGame();
 	}
 	@Override
@@ -166,6 +172,11 @@ public class SnakeMain extends PApplet{
 			  if (snake.posX.get(0) == apple.position.x && snake.posY.get(0) == apple.position.y) {
 				    apple.spawn(map);
 				    snake.comer();
+				    //SONIDO AL COMER MANZANA
+				    if (eatSound != null) {
+				        eatSound.rewind();
+				        eatSound.play();
+				    }
 				    
 				    // Sumar puntaje según quién haya comido
 				    if (snake == humanSnake) {
@@ -268,6 +279,12 @@ public class SnakeMain extends PApplet{
 			  if (key == '1') seleccionarDificultad("fácil");
 			  if (key == '2') seleccionarDificultad("medio");
 			  if (key == '3') seleccionarDificultad("difícil");
+		}
+		@Override
+		public void stop() {
+		    eatSound.close();
+		    minim.stop();
+		    super.stop();
 		}
 		@Override
 		public void mouseClicked() {
