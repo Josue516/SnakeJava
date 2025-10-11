@@ -12,6 +12,9 @@ public class SnakeMain extends PApplet{
 	AudioPlayer eatSound;
 	//MUSICA DE FONDO
 	AudioPlayer music;
+	//SISTEMA DE VIDAS PARA EL JUGADOR
+	int vidasPlayer = 3;
+	boolean gameOver = false;
 	//PUNTAJE USUARIO/BOT
 	int playerScore = 0;
 	int botScore = 0;
@@ -64,6 +67,18 @@ public class SnakeMain extends PApplet{
 		    playHumanSnake();
 		    playBotSnake(botSnake);
 		  }
+		if (gameOver) {
+		    background(0);
+		    textAlign(CENTER, CENTER);
+		    textSize(32);
+		    fill(255, 0, 0);
+		    text("GAME OVER", width / 2, height / 2 - 40);
+		    
+		    textSize(20);
+		    fill(255);
+		    text("Presiona R para reiniciar", width / 2, height / 2 + 40);
+		    noLoop(); // detiene el draw
+		    return;}
 	}
 	//MENU DE SELECCION DE NIVEL:
 	void drawMenu() {
@@ -95,6 +110,7 @@ public class SnakeMain extends PApplet{
 		  
 		  textSize(18);
 		  text("Puede volver al menu con la tecla 'm' \n O cambiar en medio del juego con los numeros 1, 2 y 3.", width / 2, 450);
+		  
 		}
 	void initGame() {
 		updateMap();
@@ -152,6 +168,19 @@ public class SnakeMain extends PApplet{
 		  textAlign(LEFT);
 		  text("Dificultad: " + dificultad, 30, 495);
 		  
+		  // ====== MOSTRAR VIDAS ======
+		  textAlign(RIGHT);
+		  textSize(12);
+		  fill(255);
+		  text("Vidas: ", 420, 495);
+		  
+		  // Dibujar corazones/vidas
+		  for (int i = 0; i < vidasPlayer; i++) {
+		    fill(255, 0, 0); // Rojo para corazones
+		    // Dibuja un pequeño cuadrado por cada vida
+		    rect(430 + (i * 20), 485, 15, 15);
+		  }
+		  
 		  //PUNTAJES
 		  textAlign(CENTER);
 		  textSize(12);
@@ -203,33 +232,80 @@ public class SnakeMain extends PApplet{
 		}
 		
 		void detectBorder(Snake s) {
-			if(s.posX.get(0) < 0 || s.posX.get(0) > (columnas - 1) || s.posY.get(0) < 0 || s.posY.get(0) > (filas - 1)) {
-				s.restart();
-				if (s == humanSnake) playerScore = 0;
-				if (s == botSnake) botScore = 0;
-			}
-		}
+			if(s.posX.get(0) < 0 || s.posX.get(0) > (columnas - 1) || 
+				     s.posY.get(0) < 0 || s.posY.get(0) > (filas - 1)) {
+				    
+				    if (s == humanSnake) {
+				      vidasPlayer--;
+				      playerScore = 0;
+				      direction.set(1, 0);
+				      
+				      if (vidasPlayer > 0) {
+				        humanSnake.restart();
+				      } else {
+				        gameOver = true;
+				        music.pause();
+				      }
+				    }
+				    
+				    if (s == botSnake) {
+				      botScore = 0;
+				      s.restart();
+				    }
+				  }
+				}
 		
 		void snakeCrash(Snake s1, Snake s2) {
-			if (s1.alive == true) {
-				for (int i = 2; i < s1.posX.size(); i++) {
-					if(s1.posX.get(0) == s1.posX.get(i) && s1.posY.get(0) == s1.posY.get(i)) {
-						s1.restart();
-						if (s1 == humanSnake) playerScore = 0;
-						if (s1 == botSnake) botScore = 0;
-					}
+			 if (s1.alive == true) {
+				    for (int i = 2; i < s1.posX.size(); i++) {
+				      if(s1.posX.get(0) == s1.posX.get(i) && s1.posY.get(0) == s1.posY.get(i)) {
+				        
+				        if (s1 == humanSnake) {
+				          vidasPlayer--;
+				          playerScore = 0;
+				          direction.set(1, 0);
+				          if (vidasPlayer > 0) {
+				            humanSnake.restart();
+				          } else {
+				            gameOver = true;
+				            music.pause();
+				          }
+				        }
+				        
+				        if (s1 == botSnake) {
+				          botScore = 0;
+				          s1.restart();
+				        }
+				        return;
+				      }
+				    }
+				  }
+				  
+				  if (s1.alive == true && s2.alive == true) {
+				    for (int i = 0; i < s2.posX.size(); i++) {
+				      if (s1.posX.get(0) == s2.posX.get(i) && s1.posY.get(0) == s2.posY.get(i)) {
+				        
+				        if (s1 == humanSnake) {
+				          vidasPlayer--;
+				          playerScore = 0;
+				          direction.set(1, 0);
+				          if (vidasPlayer > 0) {
+				            humanSnake.restart();
+				          } else {
+				            gameOver = true;
+				            music.pause();
+				          }
+				        }
+				        
+				        if (s1 == botSnake) {
+				          botScore = 0;
+				          s1.restart();
+				        }
+				        return;
+				      }
+				    }
+				  }
 				}
-			}
-			if (s1.alive == true && s2.alive == true) {
-				for (int i = 0; i < s2.posX.size(); i++) {
-					if (s1.posX.get(0) == s2.posX.get(i) && s1.posY.get(0) == s2.posY.get(i)) {
-						s1.restart();
-						if (s1 == humanSnake) playerScore = 0;
-						if (s1 == botSnake) botScore = 0;
-					}
-				}
-			}
-		}
 		void playBotSnake(Snake bot) {
 			if (bot.alive == true) {
 				moveBotSnake(bot);
@@ -274,9 +350,6 @@ public class SnakeMain extends PApplet{
 				direction.set(1,0);
 				}
 			}
-			if (key == 'r') {
-				restartGame();
-			}
 			if (key == 'm') {
 				  gameState = "menu";
 				  humanSnake.restart();
@@ -284,7 +357,29 @@ public class SnakeMain extends PApplet{
 				  playerScore = 0;
 				  botScore = 0;
 				  music.pause();
+				  vidasPlayer = 3;
 			}
+			 if (key == 'r') {
+				    // Reiniciar completamente el juego
+				    gameOver = false;
+				    direction.set(1, 0);
+				    music.loop();
+				    vidasPlayer = 3;
+				    playerScore = 0;
+				    botScore = 0;
+				    humanSnake.restart();
+				    botSnake.restart();
+				    apple.spawn(map);
+				    loop(); // Reanudar el draw() si estaba detenido
+				    
+				    // Si estabas en el menú, volver a jugar
+				    if (gameState.equals("menu")) {
+				      gameState = "jugando";
+				      if (!music.isPlaying()) {
+				        music.loop();
+				      }
+				    }
+				  }
 			// --- Selector de dificultad ---
 			  if (key == '1') seleccionarDificultad("fácil");
 			  if (key == '2') seleccionarDificultad("medio");
