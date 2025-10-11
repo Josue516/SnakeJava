@@ -1,6 +1,8 @@
 package Codigo;
 import processing.core.*;
 import ddf.minim.*;
+
+
 public class SnakeMain extends PApplet{
 	public static void main(String[] args) {
 		PApplet.main(new String[] {Codigo.SnakeMain.class.getName()});
@@ -8,6 +10,8 @@ public class SnakeMain extends PApplet{
 	//SONIDO AL COMER LA MANZANA
 	Minim minim;
 	AudioPlayer eatSound;
+	//MUSICA DE FONDO
+	AudioPlayer music;
 	//PUNTAJE USUARIO/BOT
 	int playerScore = 0;
 	int botScore = 0;
@@ -39,6 +43,11 @@ public class SnakeMain extends PApplet{
 		frameRate(25);
 		minim = new Minim(this);
 		eatSound = minim.loadFile("eat.mp3"); // o .wav
+		music = minim.loadFile("music.mp3");
+
+		// Reproduce la música en bucle
+		//music.loop();
+		
 		initGame();
 	}
 	@Override
@@ -274,6 +283,7 @@ public class SnakeMain extends PApplet{
 				  botSnake.restart();
 				  playerScore = 0;
 				  botScore = 0;
+				  music.pause();
 			}
 			// --- Selector de dificultad ---
 			  if (key == '1') seleccionarDificultad("fácil");
@@ -294,14 +304,17 @@ public class SnakeMain extends PApplet{
 			      if (mouseY >= 260 && mouseY <= 300) {
 			        seleccionarDificultad("fácil");
 			        gameState = "jugando";
+			        music.loop();
 			        initGame();
 			      } else if (mouseY >= 320 && mouseY <= 360) {
 			        seleccionarDificultad("medio");
 			        gameState = "jugando";
+			        music.loop();
 			        initGame();
 			      } else if (mouseY >= 380 && mouseY <= 420) {
 			        seleccionarDificultad("difícil");
 			        gameState = "jugando";
+			        music.loop();
 			        initGame();
 			      }
 			    }

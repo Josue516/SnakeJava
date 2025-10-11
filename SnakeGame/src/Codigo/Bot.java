@@ -228,7 +228,7 @@ public class Bot extends PApplet{
 				longestRoad = longRoad.getLongestRoad();
 			}
 		}
-		return longestRoad[contador];
+		return longestRoad[Math.min(contador, longestRoad.length - 1)];
 	}
 	private int getFarestNodo(int dist[]){
         int nodo = 0;
